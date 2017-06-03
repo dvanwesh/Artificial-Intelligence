@@ -38,9 +38,9 @@ public class AStarForShortDistance {
 	}
 	public static void AStar(){
 		open=new PriorityQueue<Cell>();
-		open.add(new Cell(start_i,start_j));
+		open.add(grid[start_i][start_j]);
 		Cell current;
-		while(!open.isEmpty()){
+		while(true){
 			current=open.poll();
 			if(current==null) break;
 			closed[current.x][current.y]=true;
@@ -74,7 +74,7 @@ public class AStarForShortDistance {
 					checkAndUpdateCost(current, neighbour, current.finalCost+DIAGONAL_COST,true);
 				}
 			}
-			if(current.y+1>grid[0].length){
+			if(current.y+1<grid[0].length){
 				neighbour=grid[current.x][current.y+1];
 				checkAndUpdateCost(current, neighbour, current.finalCost+ST_COST,false);
 			}
@@ -91,7 +91,7 @@ public class AStarForShortDistance {
 		for(int i=0;i<x;i++){
 			for(int j=0;j<y;j++){
 				grid[i][j]=new Cell(i,j);
-				grid[i][j].heuristicCost=Math.abs(i-e_x)+Math.abs(i-e_y);
+				grid[i][j].heuristicCost=Math.abs(i-e_x)+Math.abs(j-e_y);
 			}
 		}
 		grid[s_x][s_y].finalCost=0;
@@ -100,20 +100,31 @@ public class AStarForShortDistance {
 		}
 		printGrid(x,y,s_x,s_y,e_x,e_y);
 		AStar();
+		printGridWithCost(x,y);
 		printPath(e_x,e_y);
 		printGrid(x,y,s_x,s_y,e_x,e_y);
 	}
 	
+	private static void printGridWithCost(int x, int y) {
+		for(int i=0;i<x;i++){
+			for(int j=0;j<y;j++){
+				if(grid[i][j]==null) System.out.print("B ");
+				else System.out.print(grid[i][j].finalCost+" ");
+			}
+			System.out.println();
+		}
+		System.out.println();
+	}
 	private static void printGrid(int x,int y,int s_x,int s_y,int e_x,int e_y) {
 		System.out.println("GRID---");
 		for(int i=0;i<x;i++){
 			for(int j=0;j<y;j++){
 				if(path[i][j] && !(i==s_x && j==s_y)){
 					if(diagonalPath[i][j]){
-						System.out.print("\\--/");
+						System.out.print("#   ");
 					}
 					else{
-						System.out.print("<-->");
+						System.out.print("#   ");
 					}
 				}
 				else if(i==s_x && j==s_y){

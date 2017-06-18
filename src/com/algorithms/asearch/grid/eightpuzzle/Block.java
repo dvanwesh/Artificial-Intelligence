@@ -13,6 +13,7 @@ import java.util.List;
 public class Block implements Comparable<Block> {
 	int[][] ar;
 	int numberOfMovesMade;
+	Block parent=null;
 
 	public Block(int n) {
 		ar = new int[n][n];
@@ -124,7 +125,17 @@ public class Block implements Comparable<Block> {
 	public int getSize() {
 		return ar.length;
 	}
-
+	 public Integer[] toSimpleArray(){
+	        int n=ar.length;
+	        int k=0;
+	        Integer[] tmp=new Integer[n*n];
+	        for(int i=0;i<n;i++){
+	            for(int j=0;j<n;j++){
+	                tmp[k++]=ar[i][j];
+	            }
+	        }
+	        return tmp;
+	    }
 	@Override
 	public String toString() {
 		int n = ar.length;
@@ -156,7 +167,28 @@ public class Block implements Comparable<Block> {
 
 	@Override
 	public int compareTo(Block b) {
-		return getHammingPriority() - b.getHammingPriority();
+		if(getManhattenDistance()==b.getManhattenDistance()){
+			if(numberOfMovesMade==b.numberOfMovesMade) return 1;
+			return numberOfMovesMade-b.numberOfMovesMade;
+		}
+		return getManhattenDistance() - b.getManhattenDistance();
+	}
+	public int getManhattenDistance(){
+		int n = ar.length;
+		int dist=0;
+		for(int i=0;i<n;i++){
+			for(int j=0;j<n;j++){
+				if(ar[i][j]!=0){
+					dist+=getDist(i,j,n,ar[i][j]);
+				}
+			}
+		}
+		return numberOfMovesMade+dist;
+	}
+	private int getDist(int i, int j, int n, int num) {
+		int t_j=num%n==0?(n-1):((num%n)-1);
+		int t_i=num%n==0?(num/n)-1:num/n;
+		return Math.abs(Math.abs(i-t_i)+Math.abs(j-t_j));
 	}
 
 	private boolean equlas(Block b) {
